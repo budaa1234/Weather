@@ -5,15 +5,14 @@ import { Circle } from "@/Components/circle";
 import { Narb } from "@/Components/Narb";
 import { Sarz } from "@/Components/Sarz";
 import { useEffect, useState } from "react";
-import { Search } from "lucide-react";
+import { SearchBar } from "@/Components/SearchBar";
 export default function Home() {
   const [weather, setWeather] = useState({});
   const [searchValue, setSearchValue] = useState("ulaanbaatar");
-  const [error, setError] = useState([])
-  
-  const handleChange = (event)=>{
-    setSearchValue(event.target.value)
-  }
+  const [cities, setCities] = useState([]);
+  const [filteredCity, setFilteredCity] = useState([]);
+  const [error, setError] = useState("");
+
   const getWeather = async () => {
     try {
       const response = await fetch(
@@ -27,31 +26,36 @@ export default function Home() {
       console.log(error);
     }
   };
-   const getCities = async() => {
-    try{
+  const getCities = async () => {
+    try {
       const response = await fetch(
         "https://countriesnow.space/api/v0.1/countries"
-      )
-      const data = await response.json()
-
-      const result = data?.data?.filter((city) => {
-        const findCities = city.cities.find(
-          (findCities) => findCities === searchValue
-        )
-        return findCities
-      })
-       const city = result[0].cities.find((city) => city === searchValue)
-       setSearchValue(city)
-    }catch(error){
-      setError("No location found")
+      );
+      const data = await response.json();
+      setCities(data.data);
+    } catch (error) {
+      setError("No location found");
     }
-   }
+  };
 
   useEffect(() => {
     getWeather();
-    getCities()
+    getCities();
   }, []);
-   
+  const handleChange = (event) => {
+    setSearchValue(event.target.value);
+
+    const citiesAndcounty = cities.flatMap((country) =>
+      country.cities.map((city) => `${city}, ${country.country}`)
+    );
+
+    const city = citiesAndcounty
+      ?.filter((item) =>
+        item.toLowerCase().startsWith(searchValue.toLocaleLowerCase())
+      )
+      .slice(0, 4);
+    setFilteredCity(city);
+  };
   return (
     <div className="flex min-h-screen">
       {/* zuun */}
@@ -59,16 +63,15 @@ export default function Home() {
       <div className="relative flex flex-1/2 items-center justify-center">
         <Narb />
         <div className=" relative flex-col w-[567px] justify-center z-20">
-          <div className=" relative flex w-full  pl-[30px]  -top-16 text-[30px] bg-[#FFFFFF] shadow-md rounded-[48px]">
-            <input
-              onChange={handleChange}
-              type="text"
-              placeholder="Search"
-              className=" "
+          <div className="absolute flex w-full  pl-[30px]  -top-16 text-[30px] bg-[#FFFFFF] shadow-md rounded-[48px] z-20">
+            <SearchBar
+              handleChange={handleChange}
+              searchValue={searchValue}
+              filteredCity={filteredCity}
+              setSearchValue={setSearchValue}
+              getWeather={getWeather}
             />
-            <div className=" pt-3 rounded-[38px]">
-              <button onClick={getWeather}>Search</button>
-            </div>
+            {error && <div>{error}</div>}
           </div>
           <div className="relative flex w-[567px] justify-center z-10">
             <div className=" z-20 w-103 h-207 rounded-10.5 overflow-hidden shadow-lg bg-white/75 rounded-[48px]">
@@ -93,7 +96,7 @@ export default function Home() {
         </div>
       </div>
 
-      <Circle/>
+      <Circle />
 
       {/* baruun */}
 

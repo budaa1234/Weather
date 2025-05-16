@@ -22,11 +22,11 @@ export const Circle = () => {
               <img src="sumz.png" />
             </span>
           </div>
-          {/* <div className="relative">
-              <div className="absolute -bottom-[114px] right-[10px] w-10 h-14 bg-[#F3F4F6]"></div>
-              <div className="absolute -bottom-[117px] right-[-7px] w-20 h-16 bg-[#0F141E] rounded-tl-full"></div>
-            </div> */}
         </div>
+        {/* <div className="relative">
+          <div className="absolute -bottom-[114px] right-[27px] w-10 h-14 bg-[#F3F4F6]"></div>
+          <div className="absolute -bottom-[117px] right-[13px] w-20 h-16 bg-[#0F141E] rounded-tl-full"></div>
+        </div> */}
       </div>
     </div>
   );
