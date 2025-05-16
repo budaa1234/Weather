@@ -2,18 +2,22 @@ import { Sun } from "@/Components/Sun";
 import { Moon } from "@/Components/Moon";
 import { User } from "@/Components/User";
 import { Circle } from "@/Components/circle";
-
+import { Narb } from "@/Components/Narb";
+import { Sarz } from "@/Components/Sarz";
 import { useEffect, useState } from "react";
+import { Search } from "lucide-react";
 export default function Home() {
   const [weather, setWeather] = useState({});
-  const [city, setCity] = useState("ulaanbaatar");
-
-  const inter = (e) => setCity(e.target.value);
-
+  const [searchValue, setSearchValue] = useState("ulaanbaatar");
+  const [error, setError] = useState([])
+  
+  const handleChange = (event)=>{
+    setSearchValue(event.target.value)
+  }
   const getWeather = async () => {
     try {
       const response = await fetch(
-        `https://api.weatherapi.com/v1/forecast.json?key=e6600c3f220e429fa5e25438251505&q=${city}`
+        `https://api.weatherapi.com/v1/forecast.json?key=e6600c3f220e429fa5e25438251505&q=${searchValue}`
       );
 
       const data = await response.json();
@@ -23,20 +27,41 @@ export default function Home() {
       console.log(error);
     }
   };
+   const getCities = async() => {
+    try{
+      const response = await fetch(
+        "https://countriesnow.space/api/v0.1/countries"
+      )
+      const data = await response.json()
+
+      const result = data?.data?.filter((city) => {
+        const findCities = city.cities.find(
+          (findCities) => findCities === searchValue
+        )
+        return findCities
+      })
+       const city = result[0].cities.find((city) => city === searchValue)
+       setSearchValue(city)
+    }catch(error){
+      setError("No location found")
+    }
+   }
 
   useEffect(() => {
     getWeather();
+    getCities()
   }, []);
-
+   
   return (
     <div className="flex min-h-screen">
       {/* zuun */}
 
       <div className="relative flex flex-1/2 items-center justify-center">
+        <Narb />
         <div className=" relative flex-col w-[567px] justify-center z-20">
-          <div className="flex w-full  pl-[30px]  -top-16 text-[30px] bg-[#FFFFFF] shadow-md rounded-[48px]">
+          <div className=" relative flex w-full  pl-[30px]  -top-16 text-[30px] bg-[#FFFFFF] shadow-md rounded-[48px]">
             <input
-              onChange={inter}
+              onChange={handleChange}
               type="text"
               placeholder="Search"
               className=" "
@@ -46,7 +71,7 @@ export default function Home() {
             </div>
           </div>
           <div className="relative flex w-[567px] justify-center z-10">
-            <div className=" z-30 w-103 h-207 rounded-[48px] overflow-hidden shadow-lg bg-[#F3F4F6]">
+            <div className=" z-20 w-103 h-207 rounded-10.5 overflow-hidden shadow-lg bg-white/75 rounded-[48px]">
               <div className="flex-col items-center justify-center gap-y-20">
                 <p className="pl-[40px] text-[#9CA3AF]">
                   {weather.forecast?.forecastday[0]?.date}
@@ -68,14 +93,13 @@ export default function Home() {
         </div>
       </div>
 
-      <Circle />
+      <Circle/>
 
       {/* baruun */}
 
-
       <div className="relative flex flex-1/2 items-center justify-center bg-[#0F141E]">
         <div className="relative flex w-[567px] justify-center z-10 pt-[57px]">
-          <div className="z-20 w-103 h-207 rounded-[48px] overflow-hidden shadow-lg bg-[#111827]/75 backdrop-blur-md">
+          <div className="z-20 w-103 h-207 rounded-10.5 overflow-hidden shadow-lg bg-[#111827]/75  rounded-[48px]">
             <p className="pl-[40px] text-[#9CA3AF]">
               {weather.forecast?.forecastday[0]?.date}
             </p>
@@ -92,6 +116,7 @@ export default function Home() {
             <User />
           </div>
         </div>
+        <Sarz />
       </div>
     </div>
   );

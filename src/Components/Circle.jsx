@@ -8,7 +8,7 @@ export const Circle = () => {
 
       <div className=" absolute flex items-center justify-center w-[140px] h-[140px] bg-[#F3F4F6] rounded-full ">
         <div className="relative">
-          <div className="absolute -top-[114px] left-[49px] w-10 h-14 bg-[#F3F4F6]"></div>
+          <div className="absolute -top-[114px] left-[50px] w-10 h-14 bg-[#F3F4F6]"></div>
           <div className="absolute -top-[117px] left-[50px] w-20 h-16 bg-[#0F141E] rounded-bl-full"></div>
         </div>
         <div className="flex gap-3">
@@ -22,6 +22,10 @@ export const Circle = () => {
               <img src="sumz.png" />
             </span>
           </div>
+          {/* <div className="relative">
+              <div className="absolute -bottom-[114px] right-[10px] w-10 h-14 bg-[#F3F4F6]"></div>
+              <div className="absolute -bottom-[117px] right-[-7px] w-20 h-16 bg-[#0F141E] rounded-tl-full"></div>
+            </div> */}
         </div>
       </div>
     </div>
