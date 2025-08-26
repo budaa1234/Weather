@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { SearchBar } from "@/Components/SearchBar";
 export default function Home() {
   const [weather, setWeather] = useState({});
-  const [searchValue, setSearchValue] = useState("ulaanbaatar");
+  const [searchValue, setSearchValue] = useState("");
   const [cities, setCities] = useState([]);
   const [filteredCity, setFilteredCity] = useState([]);
   const [error, setError] = useState("");
@@ -42,20 +42,27 @@ export default function Home() {
     getWeather();
     getCities();
   }, []);
-  const handleChange = (event) => {
-    setSearchValue(event.target.value);
+ const handleChange = (event) => {
+  const value = event.target.value;
+  setSearchValue(value);
 
-    const citiesAndcounty = cities.flatMap((country) =>
-      country.cities.map((city) => `${city}, ${country.country}`)
-    );
+  if (value === "") {
+    setFilteredCity([]);
+    return;
+  }
 
-    const city = citiesAndcounty
-      ?.filter((item) =>
-        item.toLowerCase().startsWith(searchValue.toLocaleLowerCase())
-      )
-      .slice(0, 4);
-    setFilteredCity(city);
-  };
+  const citiesAndCountry = cities.flatMap((country) =>
+    country.cities.map((city) => `${city}, ${country.country}`)
+  );
+
+  const city = citiesAndCountry
+    ?.filter((item) =>
+      item.toLowerCase().startsWith(value.toLowerCase())
+    )
+    .slice(0, 4);
+
+  setFilteredCity(city);
+};
   return (
     <div className="flex min-h-screen">
       {/* zuun */}
@@ -63,13 +70,14 @@ export default function Home() {
       <div className="relative flex flex-1/2 items-center justify-center">
         <Narb />
         <div className=" relative flex-col w-[567px] justify-center z-20">
-          <div className="absolute flex w-full  pl-[30px]  -top-16 text-[30px] bg-[#FFFFFF] shadow-md rounded-[48px] z-20">
+          <div className="w-full mb-6">
             <SearchBar
               handleChange={handleChange}
               searchValue={searchValue}
               filteredCity={filteredCity}
               setSearchValue={setSearchValue}
               getWeather={getWeather}
+              setFilteredCity={setFilteredCity}
             />
             {error && <div>{error}</div>}
           </div>
